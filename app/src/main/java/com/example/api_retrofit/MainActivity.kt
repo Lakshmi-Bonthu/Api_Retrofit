@@ -12,7 +12,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var postAdapter: PostAdapter // Declare postAdapter
+    private lateinit var userAdapter: UserAdapter // Declare postAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,33 +21,31 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerview) // Make sure this matches the ID in your XML
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Initialize the adapter with an empty list at first
-        postAdapter = PostAdapter(listOf())
+        // Initializing the adapter with an empty list
+        userAdapter = UserAdapter(listOf())
+        recyclerView.adapter = userAdapter
 
-        // Set the adapter to RecyclerView
-        recyclerView.adapter = postAdapter
-
-        // Fetch the posts from the API
+        // Fetching the posts from the API
         fetchPosts()
     }
 
     private fun fetchPosts() {
-        RetrofitInstance.api.getPosts().enqueue(object : Callback<List<Post>> {
-            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+        RetrofitInstance.api.getUsers().enqueue(object : Callback<List<User>> {
+            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 if (response.isSuccessful && response.body() != null) {
                     val posts = response.body()!!
 
-                    // Update the adapter with the fetched posts
-                    postAdapter = PostAdapter(posts)
-                    recyclerView.adapter = postAdapter
+                    // Updating the adapter with the fetched posts
+                    userAdapter = UserAdapter(posts)
+                    recyclerView.adapter = userAdapter
                 } else {
-                    // Show an error message if response is not successful
+
                     Toast.makeText(this@MainActivity, "Error: ${response.message()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                // Handle failure and show an error message
+            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+
                 Toast.makeText(this@MainActivity, "Failure: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
